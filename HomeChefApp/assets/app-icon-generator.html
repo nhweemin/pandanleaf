@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeChef & Baker App Icon Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .icon-container {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .icon-variant {
+            text-align: center;
+        }
+        .icon-variant h3 {
+            margin: 10px 0 5px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .icon-variant p {
+            margin: 0;
+            font-size: 12px;
+            color: #666;
+        }
+        .instructions {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .instructions h2 {
+            color: #C41E3A;
+            margin-top: 0;
+        }
+        .instructions ol {
+            line-height: 1.6;
+        }
+        .download-btn {
+            background: #C41E3A;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .download-btn:hover {
+            background: #A01729;
+        }
+    </style>
+</head>
+<body>
+    <h1>HomeChef & Baker App Icon</h1>
+    
+    <div class="icon-container">
+        <!-- Main App Icon (1024x1024) -->
+        <svg width="200" height="200" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" id="main-icon">
+            <!-- Background Gradient -->
+            <defs>
+                <radialGradient id="bgGradient" cx="50%" cy="30%" r="80%">
+                    <stop offset="0%" style="stop-color:#FFE5E5"/>
+                    <stop offset="100%" style="stop-color:#FFF0F0"/>
+                </radialGradient>
+                <linearGradient id="plateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#F5F5F5"/>
+                    <stop offset="100%" style="stop-color:#E8E8E8"/>
+                </linearGradient>
+                <linearGradient id="chefHatGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#FFFFFF"/>
+                    <stop offset="100%" style="stop-color:#F8F8F8"/>
+                </linearGradient>
+                <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#C41E3A" flood-opacity="0.2"/>
+                </filter>
+            </defs>
+            
+            <!-- Background Circle -->
+            <circle cx="512" cy="512" r="480" fill="url(#bgGradient)" stroke="#C41E3A" stroke-width="8"/>
+            
+            <!-- Plate Base -->
+            <ellipse cx="512" cy="580" rx="320" ry="280" fill="url(#plateGradient)" filter="url(#shadow)"/>
+            <ellipse cx="512" cy="570" rx="300" ry="260" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="3"/>
+            
+            <!-- Chef Hat -->
+            <ellipse cx="380" cy="320" rx="120" ry="140" fill="url(#chefHatGradient)" stroke="#D0D0D0" stroke-width="2"/>
+            <rect x="280" y="400" width="200" height="60" rx="30" fill="#FFFFFF" stroke="#D0D0D0" stroke-width="2"/>
+            
+            <!-- Cooking Utensils -->
+            <!-- Spatula -->
+            <rect x="300" y="500" width="15" height="120" rx="7" fill="#8B4513" transform="rotate(-15 307 560)"/>
+            <ellipse cx="307" cy="485" rx="25" ry="15" fill="#C0C0C0" transform="rotate(-15 307 485)"/>
+            
+            <!-- Whisk -->
+            <rect x="700" y="480" width="12" height="140" rx="6" fill="#8B4513" transform="rotate(20 706 550)"/>
+            <g transform="rotate(20 706 465)">
+                <ellipse cx="706" cy="465" rx="3" ry="20" fill="#C0C0C0"/>
+                <ellipse cx="700" cy="465" rx="3" ry="20" fill="#C0C0C0"/>
+                <ellipse cx="712" cy="465" rx="3" ry="20" fill="#C0C0C0"/>
+                <ellipse cx="694" cy="465" rx="3" ry="20" fill="#C0C0C0"/>
+                <ellipse cx="718" cy="465" rx="3" ry="20" fill="#C0C0C0"/>
+            </g>
+            
+            <!-- Food Items on Plate -->
+            <!-- Croissant -->
+            <path d="M 420 540 Q 460 520 500 540 Q 520 560 500 580 Q 460 590 420 570 Q 400 550 420 540" 
+                  fill="#F4A261" stroke="#E9C46A" stroke-width="2"/>
+            <path d="M 430 545 Q 450 535 470 545" fill="none" stroke="#E76F51" stroke-width="1.5"/>
+            
+            <!-- Asian Bun -->
+            <circle cx="580" cy="560" r="45" fill="#E9C46A"/>
+            <circle cx="580" cy="560" r="40" fill="#F4A261"/>
+            <circle cx="575" cy="555" r="8" fill="#C41E3A"/>
+            <circle cx="585" cy="565" r="6" fill="#C41E3A"/>
+            
+            <!-- Bread Loaf -->
+            <ellipse cx="450" cy="600" rx="60" ry="35" fill="#DEB887"/>
+            <path d="M 410 595 Q 450 585 490 595" fill="none" stroke="#CD853F" stroke-width="2"/>
+            <path d="M 415 605 Q 450 600 485 605" fill="none" stroke="#CD853F" stroke-width="2"/>
+            
+            <!-- Steam Lines -->
+            <g opacity="0.6">
+                <path d="M 470 480 Q 475 460 470 440 Q 465 420 470 400" fill="none" stroke="#C41E3A" stroke-width="3" stroke-linecap="round"/>
+                <path d="M 490 485 Q 495 465 490 445 Q 485 425 490 405" fill="none" stroke="#C41E3A" stroke-width="3" stroke-linecap="round"/>
+                <path d="M 510 480 Q 515 460 510 440 Q 505 420 510 400" fill="none" stroke="#C41E3A" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            
+            <!-- App Name (small, bottom) -->
+            <text x="512" y="900" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#C41E3A">HomeChef</text>
+            <text x="512" y="950" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="normal" fill="#E76F51">& Baker</text>
+        </svg>
+    </div>
+    
+    <div class="icon-grid">
+        <!-- iOS App Icon (rounded corners) -->
+        <div class="icon-variant">
+            <svg width="120" height="120" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <clipPath id="ios-clip">
+                        <rect x="0" y="0" width="1024" height="1024" rx="180" ry="180"/>
+                    </clipPath>
+                </defs>
+                <g clip-path="url(#ios-clip)">
+                    <!-- Same content as main icon but clipped -->
+                    <circle cx="512" cy="512" r="480" fill="url(#bgGradient)" stroke="#C41E3A" stroke-width="8"/>
+                    <ellipse cx="512" cy="580" rx="320" ry="280" fill="url(#plateGradient)" filter="url(#shadow)"/>
+                    <ellipse cx="512" cy="570" rx="300" ry="260" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="3"/>
+                    <ellipse cx="380" cy="320" rx="120" ry="140" fill="url(#chefHatGradient)" stroke="#D0D0D0" stroke-width="2"/>
+                    <rect x="280" y="400" width="200" height="60" rx="30" fill="#FFFFFF" stroke="#D0D0D0" stroke-width="2"/>
+                </g>
+            </svg>
+            <h3>iOS Icon</h3>
+            <p>1024×1024px<br>Rounded corners</p>
+        </div>
+        
+        <!-- Android Adaptive Icon -->
+        <div class="icon-variant">
+            <svg width="120" height="120" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="512" cy="512" r="512" fill="#C41E3A"/>
+                <circle cx="512" cy="512" r="400" fill="#FFFFFF"/>
+                <ellipse cx="380" cy="320" rx="80" ry="100" fill="url(#chefHatGradient)" stroke="#D0D0D0" stroke-width="2"/>
+                <rect x="320" y="380" width="120" height="40" rx="20" fill="#FFFFFF" stroke="#D0D0D0" stroke-width="2"/>
+                <circle cx="580" cy="560" r="60" fill="#F4A261"/>
+                <ellipse cx="450" cy="600" rx="80" ry="45" fill="#DEB887"/>
+            </svg>
+            <h3>Android Adaptive</h3>
+            <p>1024×1024px<br>Foreground + Background</p>
+        </div>
+        
+        <!-- Web Favicon -->
+        <div class="icon-variant">
+            <svg width="120" height="120" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="1024" height="1024" fill="#C41E3A"/>
+                <circle cx="512" cy="512" r="400" fill="#FFFFFF"/>
+                <ellipse cx="380" cy="360" rx="100" ry="120" fill="#F8F8F8" stroke="#D0D0D0" stroke-width="4"/>
+                <rect x="300" y="440" width="160" height="50" rx="25" fill="#FFFFFF" stroke="#D0D0D0" stroke-width="4"/>
+                <circle cx="580" cy="580" r="80" fill="#F4A261"/>
+                <text x="512" y="750" text-anchor="middle" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="#C41E3A">HC</text>
+            </svg>
+            <h3>Web Favicon</h3>
+            <p>512×512px<br>Simple design</p>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h2>🎨 How to Use These Icons</h2>
+        <ol>
+            <li><strong>Screenshot the main icon above</strong> at full resolution (right-click → "Save image as" or use a screenshot tool)</li>
+            <li><strong>Resize to required dimensions:</strong>
+                <ul>
+                    <li><strong>iOS:</strong> 1024×1024px (icon.png)</li>
+                    <li><strong>Android:</strong> 1024×1024px (adaptive-icon.png)</li>
+                    <li><strong>Web:</strong> 512×512px (favicon.png)</li>
+                    <li><strong>Splash:</strong> 400×400px (splash-icon.png)</li>
+                </ul>
+            </li>
+            <li><strong>Replace the files</strong> in your <code>assets/images/</code> folder</li>
+            <li><strong>Test the app</strong> to see your new icon!</li>
+        </ol>
+        
+        <h3>🛠️ Professional Icon Creation (Optional)</h3>
+        <p>For production apps, consider using:</p>
+        <ul>
+            <li><strong>Figma</strong> - Free design tool with icon templates</li>
+            <li><strong>App Icon Generator</strong> - Online tools that create all sizes</li>
+            <li><strong>Adobe Illustrator</strong> - Professional vector graphics</li>
+            <li><strong>Canva</strong> - Easy template-based design</li>
+        </ul>
+        
+        <button class="download-btn" onclick="downloadSVG('main-icon', 'homechef-app-icon')">Download Main Icon SVG</button>
+        <button class="download-btn" onclick="generateAllSizes()">Generate All Sizes</button>
+    </div>
+    
+    <script>
+        function downloadSVG(elementId, filename) {
+            const svg = document.getElementById(elementId);
+            const serializer = new XMLSerializer();
+            const svgBlob = new Blob([serializer.serializeToString(svg)], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename + '.svg';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function generateAllSizes() {
+            alert('To generate all sizes:\n\n1. Right-click on the main icon above\n2. Save as SVG or PNG\n3. Use an online app icon generator\n4. Upload to generate all required sizes\n\nRecommended tools:\n• makeappicon.com\n• appicon.co\n• iconifier.net');
+        }
+        
+        // Add some hover effects
+        document.querySelectorAll('svg').forEach(svg => {
+            svg.style.transition = 'transform 0.3s ease';
+            svg.addEventListener('mouseenter', () => {
+                svg.style.transform = 'scale(1.05)';
+            });
+            svg.addEventListener('mouseleave', () => {
+                svg.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html> 

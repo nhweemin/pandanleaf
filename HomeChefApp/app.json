@@ -1,0 +1,67 @@
+{
+  "expo": {
+    "name": "Pandan Leaf",
+    "slug": "PandanLeaf",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "pandanleaf",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nhweemin.PandanLeaf",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to allow home business owners to take photos of their products.",
+        "NSPhotoLibraryUsageDescription": "This app accesses the photo library to allow home business owners to select photos of their products."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.nhweemin.PandanLeaf",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share pictures of your products.",
+          "cameraPermission": "The app accesses your camera to let you take pictures of your products."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "dd64351f-dc2b-4e76-ac27-bddb8ac4efef"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/dd64351f-dc2b-4e76-ac27-bddb8ac4efef"
+    }
+  }
+}
