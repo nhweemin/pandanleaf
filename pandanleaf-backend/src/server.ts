@@ -41,11 +41,13 @@ const connectDB = async () => {
     console.log('🔍 Using URI:', mongoURI.replace(/\/\/.*@/, '//***:***@'));
     
     const conn = await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 30000,
-      socketTimeoutMS: 60000,
-      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,  // Reduced from 30s to 5s
+      socketTimeoutMS: 10000,          // Reduced from 60s to 10s
+      connectTimeoutMS: 5000,          // Fast connection timeout
+      maxPoolSize: 5,                  // Reduced pool size
       retryWrites: true,
-      retryReads: true
+      retryReads: false,               // Disable read retries for faster startup
+      bufferCommands: false            // Don't buffer commands if not connected
     });
     
     console.log('✅ MongoDB connected successfully!');
@@ -113,17 +115,17 @@ app.use(errorHandler);
 // Start server
 const startServer = async () => {
   try {
-    await connectDB();
-    app.listen(PORT, () => {
-      const environment = process.env.NODE_ENV || 'development';
-      const healthCheckUrl = environment === 'production' 
-        ? 'https://pandanleaf-production.up.railway.app/health'
-        : `http://localhost:${PORT}/health`;
-        
+    // Start server immediately, don't wait for database
+    const server = app.listen(PORT, () => {
       console.log(`🚀 Pandan Leaf API server running on port ${PORT}`);
-      console.log(`📱 Environment: ${environment}`);
-      console.log(`🌐 Health check: ${healthCheckUrl}`);
-      console.log(`🔗 API URL: ${environment === 'production' ? 'https://pandanleaf-production.up.railway.app' : `http://localhost:${PORT}`}`);
+      console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🌐 Health check: https://pandanleaf-production.up.railway.app/health`);
+      console.log(`🔗 API URL: https://pandanleaf-production.up.railway.app`);
+    });
+
+    // Connect to database in background after server starts
+    connectDB().catch(err => {
+      console.log('📡 Database connection will retry in background...');
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
