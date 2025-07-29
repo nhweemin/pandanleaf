@@ -193,8 +193,8 @@ const VendorSchema = new Schema<IVendor>({
   timestamps: true
 });
 
-// Indexes for better query performance
-VendorSchema.index({ userId: 1 });
+// Indexes for better query performance  
+// Note: userId index already created by unique: true constraint
 VendorSchema.index({ businessType: 1 });
 VendorSchema.index({ isApproved: 1, isActive: 1 });
 VendorSchema.index({ 'location.city': 1, 'location.state': 1 });

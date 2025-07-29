@@ -172,7 +172,8 @@ const chefSchema = new Schema<IChef>({
 });
 
 // Index for efficient queries
-chefSchema.index({ userId: 1 });
+// Note: userId should be unique for chefs too
+chefSchema.index({ userId: 1 }, { unique: true });
 chefSchema.index({ 'verification.status': 1 });
 chefSchema.index({ isActive: 1, isApproved: 1 });
 chefSchema.index({ specialties: 1 });
