@@ -27,7 +27,12 @@ const PORT = process.env.PORT || 3001;
 // Database connection
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/pandanleaf';
+    // Try Railway's automatic MongoDB variables first, then fallback
+    const mongoURI = process.env.MONGO_URL || 
+                     process.env.MONGODB_URI || 
+                     'mongodb://localhost:27017/pandanleaf';
+    
+    console.log('🔍 Attempting MongoDB connection...');
     await mongoose.connect(mongoURI);
     console.log('✅ MongoDB connected successfully');
   } catch (error) {
