@@ -6,10 +6,10 @@ const API_CONFIG = {
     BASE_URL: 'http://localhost:3001',
   },
   staging: {
-    BASE_URL: 'https://homechef-production.up.railway.app', // Railway staging URL
+    BASE_URL: 'https://pandanleaf-production.up.railway.app', // Railway staging URL
   },
   production: {
-    BASE_URL: 'https://homechef-production.up.railway.app', // Railway production URL
+    BASE_URL: 'https://pandanleaf-production.up.railway.app', // Railway production URL
   }
 };
 

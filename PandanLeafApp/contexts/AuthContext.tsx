@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const API_BASE_URL = 'https://homechef-production.up.railway.app';
+  const API_BASE_URL = 'https://pandanleaf-production.up.railway.app';
 
   useEffect(() => {
     // Check for stored auth data on app launch

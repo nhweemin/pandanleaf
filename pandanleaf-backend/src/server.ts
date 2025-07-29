@@ -94,13 +94,13 @@ const startServer = async () => {
     app.listen(PORT, () => {
       const environment = process.env.NODE_ENV || 'development';
       const healthCheckUrl = environment === 'production' 
-        ? 'https://homechef-production.up.railway.app/health'
+        ? 'https://pandanleaf-production.up.railway.app/health'
         : `http://localhost:${PORT}/health`;
         
       console.log(`🚀 Pandan Leaf API server running on port ${PORT}`);
       console.log(`📱 Environment: ${environment}`);
       console.log(`🌐 Health check: ${healthCheckUrl}`);
-      console.log(`🔗 API URL: ${environment === 'production' ? 'https://homechef-production.up.railway.app' : `http://localhost:${PORT}`}`);
+      console.log(`🔗 API URL: ${environment === 'production' ? 'https://pandanleaf-production.up.railway.app' : `http://localhost:${PORT}`}`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
