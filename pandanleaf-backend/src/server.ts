@@ -34,14 +34,25 @@ const connectDB = async () => {
                      'mongodb://localhost:27017/pandanleaf';
     
     console.log('🔗 Connecting to MongoDB...');
-    await mongoose.connect(mongoURI, {
+    console.log('🔍 ENV Variables check:');
+    console.log('   MONGO_URL:', process.env.MONGO_URL ? 'SET' : 'NOT SET');
+    console.log('   MONGODB_URI:', process.env.MONGODB_URI ? 'SET' : 'NOT SET');
+    console.log('   DATABASE_URL:', process.env.DATABASE_URL ? 'SET' : 'NOT SET');
+    console.log('🔍 Using URI:', mongoURI.replace(/\/\/.*@/, '//***:***@'));
+    
+    const conn = await mongoose.connect(mongoURI, {
       serverSelectionTimeoutMS: 30000,
       socketTimeoutMS: 60000,
       maxPoolSize: 10,
       retryWrites: true,
       retryReads: true
     });
-    console.log('✅ MongoDB connected successfully to:', mongoURI.replace(/\/\/.*@/, '//***:***@'));
+    
+    console.log('✅ MongoDB connected successfully!');
+    console.log('   Connection state:', mongoose.connection.readyState);
+    console.log('   Database name:', mongoose.connection.name);
+    console.log('   Host:', mongoose.connection.host);
+    console.log('   Port:', mongoose.connection.port);
   } catch (error) {
     console.warn('⚠️  MongoDB connection failed, running without database:', (error as Error).message);
     console.log('ℹ️  Install and start MongoDB to enable database functionality');
