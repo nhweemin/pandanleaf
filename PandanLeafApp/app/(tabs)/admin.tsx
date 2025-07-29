@@ -86,7 +86,7 @@ interface CreateChefForm {
   cities: string;
 }
 
-const API_BASE_URL = 'https://pandanleaf-production.up.railway.app';
+const API_BASE_URL = 'https://pandanleaf-backend-production.up.railway.app';
 
 export default function AdminScreen() {
   const { user, token } = useAuth();

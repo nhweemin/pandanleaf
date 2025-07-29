@@ -1,0 +1,6 @@
+{
+  "name": "pandanleaf-backend",
+  "version": "1.0.0",
+  "description": "Backend API for PandanLeaf home chef marketplace",
+  "cache_bust": "2025-07-29T13:30:00Z"
+} 

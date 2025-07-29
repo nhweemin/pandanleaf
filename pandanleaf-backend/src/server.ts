@@ -119,8 +119,8 @@ const startServer = async () => {
     const server = app.listen(PORT, () => {
       console.log(`🚀 Pandan Leaf API server running on port ${PORT}`);
       console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🌐 Health check: https://pandanleaf-production.up.railway.app/health`);
-      console.log(`🔗 API URL: https://pandanleaf-production.up.railway.app`);
+      console.log(`🌐 Health check: https://pandanleaf-backend-production.up.railway.app/health`);
+      console.log(`🔗 API URL: https://pandanleaf-backend-production.up.railway.app`);
     });
 
     // Connect to database in background after server starts

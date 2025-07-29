@@ -55,7 +55,7 @@ interface ChefData {
   };
 }
 
-const API_BASE_URL = 'https://pandanleaf-production.up.railway.app';
+const API_BASE_URL = 'https://pandanleaf-backend-production.up.railway.app';
 
 const categories: Category[] = ['All', 'Main Course', 'Desserts', 'Snacks', 'Soups', 'Salads', 'Beverages', 'Breakfast', 'Lunch', 'Dinner'];
 
