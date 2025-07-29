@@ -55,6 +55,14 @@ const connectDB = async () => {
     console.log('   Database name:', mongoose.connection.name);
     console.log('   Host:', mongoose.connection.host);
     console.log('   Port:', mongoose.connection.port);
+    
+    // Seed database with test users if needed
+    try {
+      const { seedTestUsers } = await import('./utils/seedDatabase');
+      await seedTestUsers();
+    } catch (seedError) {
+      console.log('⚠️  Database seeding skipped:', (seedError as Error).message);
+    }
   } catch (error) {
     console.warn('⚠️  MongoDB connection failed, running without database:', (error as Error).message);
     console.log('ℹ️  Install and start MongoDB to enable database functionality');

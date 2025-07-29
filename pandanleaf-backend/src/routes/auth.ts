@@ -71,41 +71,7 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Temporary testing users (while database connection is being fixed)
-    const testUsers = {
-      'admin@pandanleaf.com': { id: 'test-admin', name: 'Admin User', role: 'admin', password: 'test123' },
-      'indah@pandanleaf.com': { id: 'test-chef', name: 'Indah Sari', role: 'chef', password: 'test123' },
-      'customer@pandanleaf.com': { id: 'test-customer', name: 'Customer User', role: 'customer', password: 'test123' },
-      // Legacy credentials for backward compatibility
-      'admin@homechef.com': { id: 'test-admin-legacy', name: 'Admin User', role: 'admin', password: 'test123' },
-      'indah@homechef.com': { id: 'test-chef-legacy', name: 'Indah Sari', role: 'chef', password: 'test123' },
-      'customer@homechef.com': { id: 'test-customer-legacy', name: 'Customer User', role: 'customer', password: 'test123' }
-    };
-
-    // Check if it's a test user first (for testing without database)
-    if (testUsers[email as keyof typeof testUsers]) {
-      const testUser = testUsers[email as keyof typeof testUsers];
-      if (password === testUser.password) {
-        const token = generateToken(testUser.id);
-        console.log(`🧪 Test login successful for ${email} (${testUser.role})`);
-        
-        return res.status(200).json({
-          success: true,
-          message: 'Login successful (test mode)',
-          data: {
-            user: {
-              id: testUser.id,
-              name: testUser.name,
-              email: email,
-              role: testUser.role
-            },
-            token
-          }
-        });
-      }
-    }
-
-    // Try database lookup (will work once MongoDB connection is fixed)
+    // Database authentication with real users
     try {
       const user = await User.findOne({ email }).select('+password');
       if (user) {
@@ -129,7 +95,11 @@ router.post('/login', async (req, res) => {
         }
       }
     } catch (dbError) {
-      console.log('🔍 Database not available, using test mode only');
+      console.error('Database error during login:', dbError);
+      return res.status(500).json({
+        success: false,
+        message: 'Database error during authentication'
+      });
     }
 
     return res.status(400).json({

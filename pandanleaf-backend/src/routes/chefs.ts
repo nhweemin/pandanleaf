@@ -122,7 +122,7 @@ router.post('/', async (req, res) => {
       });
     }
 
-    if (user.role !== 'chef') {
+    if (user.role !== 'business_owner') {
       return res.status(403).json({
         success: false,
         message: 'User must have chef role'

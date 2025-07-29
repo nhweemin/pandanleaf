@@ -485,7 +485,7 @@ export default function VendorScreen() {
     return imageUri;
   };
 
-  if (!user || user.role !== 'chef') { // Using chef role for business owners
+  if (!user || user.role !== 'business_owner') { // Using business_owner role
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.notAuthorized}>

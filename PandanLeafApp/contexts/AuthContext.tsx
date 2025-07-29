@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export type UserRole = 'admin' | 'chef' | 'customer';
+export type UserRole = 'admin' | 'business_owner' | 'customer';
 
 export interface User {
   id: string;
@@ -65,11 +65,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // 🧪 TEST MODE: Check for hardcoded test users first (bypass backend while database issues are resolved)
       const testUsers: Record<string, any> = {
         'admin@pandanleaf.com': { id: 'test-admin', name: 'Admin User', role: 'admin', email: 'admin@pandanleaf.com' },
-        'indah@pandanleaf.com': { id: 'test-chef', name: 'Indah Sari', role: 'chef', email: 'indah@pandanleaf.com' },
+        'indah@pandanleaf.com': { id: 'test-business-owner', name: 'Indah Sari', role: 'business_owner', email: 'indah@pandanleaf.com' },
         'customer@pandanleaf.com': { id: 'test-customer', name: 'Customer User', role: 'customer', email: 'customer@pandanleaf.com' },
         // Legacy support
         'admin@homechef.com': { id: 'test-admin-legacy', name: 'Admin User', role: 'admin', email: 'admin@homechef.com' },
-        'indah@homechef.com': { id: 'test-chef-legacy', name: 'Indah Sari', role: 'chef', email: 'indah@homechef.com' },
+        'indah@homechef.com': { id: 'test-business-owner-legacy', name: 'Indah Sari', role: 'business_owner', email: 'indah@homechef.com' },
         'customer@homechef.com': { id: 'test-customer-legacy', name: 'Customer User', role: 'customer', email: 'customer@homechef.com' }
       };
 

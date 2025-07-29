@@ -125,7 +125,7 @@ router.post('/', async (req, res) => {
       });
     }
 
-    if (user.role !== 'chef') { // Use existing chef role for business owners
+    if (user.role !== 'business_owner') { // Use business_owner role
       return res.status(403).json({
         success: false,
         message: 'User must have business owner role'
