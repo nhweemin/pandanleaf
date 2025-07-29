@@ -16,8 +16,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_BASE_URL } from '../../config/api';
+import { API_ENDPOINTS } from '../../config/api';
 import { uploadImageToCloud, processImageForBackend } from '../../utils/imageUpload';
+import VideoPickerComponent from '../../components/VideoPicker';
 
 interface Product {
   _id: string;
@@ -26,6 +27,7 @@ interface Product {
   category: string;
   price: number;
   images: string[];
+  videos?: string[];
   availability: {
     isAvailable: boolean;
     quantity?: number;
@@ -62,6 +64,7 @@ export default function VendorScreen() {
   const [products, setProducts] = useState<Product[]>([]);
   const [showProductModal, setShowProductModal] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
+  const [showVideoPicker, setShowVideoPicker] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -74,11 +77,13 @@ export default function VendorScreen() {
     category: 'Other',
     price: '',
     image: '',
+    video: '',
     isAvailable: true,
     inventory: '10'
   });
 
   const [originalImageUri, setOriginalImageUri] = useState<string>('');
+  const [originalVideoUri, setOriginalVideoUri] = useState<string>('');
 
   const categories = [
     'Food & Beverages', 'Handmade Crafts', 'Baked Goods', 'Personal Services',
@@ -122,7 +127,7 @@ export default function VendorScreen() {
       console.log('🔍 Fetching products for user:', user.email);
 
       // Get current vendor profile
-      const vendorsResponse = await fetch(`${API_BASE_URL}/api/vendors`, {
+      const vendorsResponse = await fetch(`${API_ENDPOINTS.BASE_URL}/api/vendors`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -149,7 +154,7 @@ export default function VendorScreen() {
       console.log('✅ Found vendor profile:', currentVendor.businessName);
 
       // Fetch products for this vendor
-      const productsResponse = await fetch(`${API_BASE_URL}/api/vendors/${currentVendor._id}/products`, {
+      const productsResponse = await fetch(`${API_ENDPOINTS.BASE_URL}/api/vendors/${currentVendor._id}/products`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -237,6 +242,11 @@ export default function VendorScreen() {
     }
   };
 
+  const onVideoSelected = (videoUri: string) => {
+    setOriginalVideoUri(videoUri);
+    setFormData(prev => ({ ...prev, video: videoUri }));
+  };
+
   const validateForm = () => {
     if (!formData.name.trim()) {
       Alert.alert('Validation Error', 'Product name is required');
@@ -266,7 +276,7 @@ export default function VendorScreen() {
       // Step 1: Get vendor profile
       Alert.alert('Debug', 'Step 1: Getting vendor profile...', [{ text: 'Continue' }]);
       
-      const vendorsResponse = await fetch(`${API_BASE_URL}/api/vendors`, {
+      const vendorsResponse = await fetch(`${API_ENDPOINTS.BASE_URL}/api/vendors`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
 
@@ -304,12 +314,36 @@ export default function VendorScreen() {
         }
       }
 
+      // Handle video upload (if provided)
+      const videos: string[] = [];
+      if (formData.video) {
+        if (formData.video.startsWith('file://') || formData.video.startsWith('content://')) {
+          try {
+            Alert.alert('Debug', 'Step 3b: Uploading video...', [{ text: 'Continue' }]);
+            const uploadResult = await uploadImageToCloud(formData.video); // Reusing the same upload function for videos
+            if (uploadResult.success && uploadResult.url) {
+              videos.push(uploadResult.url);
+              Alert.alert('Debug', `Video uploaded successfully! Size: ${Math.round(uploadResult.url.length / 1024)} KB`, [{ text: 'Continue' }]);
+            } else {
+              throw new Error(`Video Upload Failed: ${uploadResult.error || 'Unknown error'}`);
+            }
+          } catch (uploadError) {
+            console.warn('Video upload failed:', uploadError);
+            // For now, skip video if upload fails
+            Alert.alert('Debug', `Video upload failed, skipping: ${uploadError}`, [{ text: 'Continue' }]);
+          }
+        } else {
+          videos.push(formData.video);
+        }
+      }
+
       // Prepare product data
       const productData = {
         name: formData.name.trim(),
         description: formData.description.trim(),
         category: formData.category,
         images: [imageUrl],
+        videos: videos,
         price: Number(formData.price),
         currency: 'USD',
         availability: { 
@@ -330,7 +364,7 @@ export default function VendorScreen() {
       // Create/Update product via API
       let response;
       if (editingProduct) {
-        response = await fetch(`${API_BASE_URL}/api/products/${editingProduct._id}`, {
+        response = await fetch(`${API_ENDPOINTS.BASE_URL}/api/products/${editingProduct._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -339,7 +373,7 @@ export default function VendorScreen() {
           body: JSON.stringify(productData)
         });
       } else {
-        response = await fetch(`${API_BASE_URL}/api/products`, {
+        response = await fetch(`${API_ENDPOINTS.BASE_URL}/api/products`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -374,7 +408,7 @@ export default function VendorScreen() {
 
   const handleDeleteProduct = async (productId: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/products/${productId}`, {
+      const response = await fetch(`${API_ENDPOINTS.BASE_URL}/api/products/${productId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -401,10 +435,12 @@ export default function VendorScreen() {
       category: 'Other',
       price: '',
       image: '',
+      video: '',
       isAvailable: true,
       inventory: '10'
     });
     setOriginalImageUri('');
+    setOriginalVideoUri('');
     setEditingProduct(null);
   };
 
@@ -417,10 +453,12 @@ export default function VendorScreen() {
         category: product.category,
         price: product.price.toString(),
         image: product.images[0] || '',
+        video: product.videos?.[0] || '',
         isAvailable: product.availability.isAvailable,
         inventory: (product.availability.quantity || 10).toString()
       });
       setOriginalImageUri(product.images[0] || '');
+      setOriginalVideoUri(product.videos?.[0] || '');
     } else {
       resetForm();
     }
@@ -494,13 +532,20 @@ export default function VendorScreen() {
           ) : (
             products.map((product) => (
               <View key={product._id} style={styles.productCard}>
-                <Image 
-                  source={{ uri: getProductImage(product) }} 
-                  style={styles.productImage}
-                  onError={(error) => {
-                    console.log('Product image error:', error.nativeEvent.error);
-                  }}
-                />
+                <View style={styles.mediaContainer}>
+                  <Image 
+                    source={{ uri: getProductImage(product) }} 
+                    style={styles.productImage}
+                    onError={(error) => {
+                      console.log('Product image error:', error.nativeEvent.error);
+                    }}
+                  />
+                  {product.videos && product.videos.length > 0 && (
+                    <View style={styles.videoIndicator}>
+                      <Ionicons name="videocam" size={16} color="#fff" />
+                    </View>
+                  )}
+                </View>
                 <View style={styles.productInfo}>
                   <Text style={styles.productName}>{product.name}</Text>
                   <Text style={styles.productDescription} numberOfLines={2}>
@@ -661,6 +706,27 @@ export default function VendorScreen() {
               </TouchableOpacity>
             </View>
 
+            {/* Video */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Product Video (Optional)</Text>
+              <TouchableOpacity
+                style={styles.imageContainer}
+                onPress={() => setShowVideoPicker(true)}
+              >
+                {formData.video ? (
+                  <View style={styles.videoPreviewContainer}>
+                    <Ionicons name="videocam" size={40} color="#007AFF" />
+                    <Text style={styles.videoPreviewText}>Video Added</Text>
+                  </View>
+                ) : (
+                  <View style={styles.imagePlaceholder}>
+                    <Ionicons name="videocam" size={40} color="#ccc" />
+                    <Text style={styles.imagePlaceholderText}>Add Video</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+
             {/* Inventory */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Daily Capacity</Text>
@@ -726,6 +792,15 @@ export default function VendorScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Video Picker Modal */}
+      <VideoPickerComponent
+        visible={showVideoPicker}
+        onClose={() => setShowVideoPicker(false)}
+        onVideoSelected={onVideoSelected}
+        currentVideo={originalVideoUri || formData.video}
+        title="Add Product Video"
+      />
     </SafeAreaView>
   );
 }
@@ -1015,5 +1090,33 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#F44336',
     textAlign: 'center',
+  },
+  videoPreviewContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 150,
+    borderRadius: 8,
+    backgroundColor: '#f0f8ff',
+  },
+  videoPreviewText: {
+    fontSize: 14,
+    color: '#007AFF',
+    marginTop: 8,
+    fontWeight: '500',
+  },
+  mediaContainer: {
+    position: 'relative',
+  },
+  videoIndicator: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 }); 

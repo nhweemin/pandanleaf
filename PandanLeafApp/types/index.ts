@@ -4,6 +4,8 @@ export interface Product {
   chef: string;
   price: number;
   image: string;
+  images?: string[];
+  videos?: string[];
   rating: number;
   cookTime: string;
   category: string;

@@ -7,6 +7,7 @@ export interface IProduct extends Document {
   category: string;
   subcategory?: string;
   images: string[];
+  videos: string[];
   price: number;
   currency: string;
   availability: {
@@ -69,6 +70,10 @@ const ProductSchema = new Schema<IProduct>({
   images: [{
     type: String,
     required: [true, 'At least one product image is required']
+  }],
+  videos: [{
+    type: String,
+    default: []
   }],
   price: {
     type: Number,
