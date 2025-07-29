@@ -48,7 +48,8 @@ const chefSchema = new Schema<IChef>({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, 'User ID is required']
+    required: [true, 'User ID is required'],
+    unique: true
   },
   businessName: {
     type: String,
@@ -172,8 +173,7 @@ const chefSchema = new Schema<IChef>({
 });
 
 // Index for efficient queries
-// Note: userId should be unique for chefs too
-chefSchema.index({ userId: 1 }, { unique: true });
+// Note: userId index already created by unique: true constraint
 chefSchema.index({ 'verification.status': 1 });
 chefSchema.index({ isActive: 1, isApproved: 1 });
 chefSchema.index({ specialties: 1 });
