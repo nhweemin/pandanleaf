@@ -27,14 +27,21 @@ const PORT = process.env.PORT || 3001;
 // Database connection
 const connectDB = async () => {
   try {
-    // Try Railway's automatic MongoDB variables first, then fallback
+    // Try multiple MongoDB environment variable names
     const mongoURI = process.env.MONGO_URL || 
                      process.env.MONGODB_URI || 
+                     process.env.DATABASE_URL || 
                      'mongodb://localhost:27017/pandanleaf';
     
-    console.log('🔍 Attempting MongoDB connection...');
-    await mongoose.connect(mongoURI);
-    console.log('✅ MongoDB connected successfully');
+    console.log('🔗 Connecting to MongoDB...');
+    await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 30000,
+      socketTimeoutMS: 60000,
+      maxPoolSize: 10,
+      retryWrites: true,
+      retryReads: true
+    });
+    console.log('✅ MongoDB connected successfully to:', mongoURI.replace(/\/\/.*@/, '//***:***@'));
   } catch (error) {
     console.warn('⚠️  MongoDB connection failed, running without database:', (error as Error).message);
     console.log('ℹ️  Install and start MongoDB to enable database functionality');
