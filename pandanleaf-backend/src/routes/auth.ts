@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
+import Vendor from '../models/Vendor';
 
 const router = express.Router();
 
@@ -79,19 +80,67 @@ router.post('/login', async (req, res) => {
         if (isPasswordValid) {
           const token = generateToken((user._id as string).toString());
 
-          return res.status(200).json({
-            success: true,
-            message: 'Login successful',
-            data: {
-              user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
-              },
-              token
-            }
+                // Auto-create vendor profile for business_owner users if it doesn't exist
+      if (user.role === 'business_owner') {
+        const existingVendor = await Vendor.findOne({ userId: user._id });
+        if (!existingVendor) {
+          console.log('🏪 Auto-creating vendor profile for business_owner:', user.email);
+          const vendor = new Vendor({
+            userId: user._id,
+            businessName: `${user.name}'s Business`,
+            businessType: 'restaurant',
+            description: 'Welcome to our business! We provide quality products and services.',
+            location: {
+              address: '123 Business Street',
+              city: 'Singapore',
+              state: 'Singapore',
+              zipCode: '123456',
+              coordinates: {
+                latitude: 1.3521,
+                longitude: 103.8198
+              }
+            },
+            contact: {
+              phone: '+6512345678',
+              email: user.email
+            },
+            businessInfo: {
+              yearsOfExperience: 2,
+              specialties: ['Quality Service', 'Customer Satisfaction']
+            },
+            portfolio: {
+              images: ['https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300'],
+              description: 'Our business portfolio'
+            },
+            verification: {
+              status: 'approved',
+              documents: []
+            },
+            ratings: {
+              average: 4.5,
+              count: 0
+            },
+            isApproved: true,
+            isActive: true
           });
+          await vendor.save();
+          console.log('✅ Auto-created vendor profile for:', user.email);
+        }
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: 'Login successful',
+        data: {
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+          },
+          token
+        }
+      });
         }
       }
     } catch (dbError) {

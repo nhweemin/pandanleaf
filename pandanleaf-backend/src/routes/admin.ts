@@ -1,10 +1,174 @@
 import express from 'express';
 import User from '../models/User';
 import Chef from '../models/Chef';
+import Vendor from '../models/Vendor';
 import Product from '../models/Product';
 import Order from '../models/Order';
 
 const router = express.Router();
+
+// Create new test user endpoint
+router.post('/create-test-user', async (req, res) => {
+  try {
+    const { name, email, password = 'test123', role = 'business_owner' } = req.body;
+
+    if (!name || !email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name and email are required'
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'User with this email already exists'
+      });
+    }
+
+    // Create new user
+    const userData = {
+      name,
+      email,
+      password,
+      role,
+      phone: '+1234567899',
+      isVerified: true,
+      isActive: true
+    };
+
+    const user = new User(userData);
+    await user.save();
+
+    console.log(`✅ Created test user: ${email} (${role})`);
+
+    // Create chef profile for business owners
+    if (role === 'business_owner') {
+      const chef = new Chef({
+        userId: user._id,
+        businessName: `${name}'s Business`,
+        cuisine: ['International', 'Fusion'],
+        description: 'Fresh test business with quality products and services.',
+        specialties: ['Custom Orders', 'Quality Service', 'Fast Delivery'],
+        isVerified: true,
+        isActive: true,
+        rating: 4.9,
+        totalOrders: 50,
+        responseTime: 15,
+        experience: 3,
+        availability: {
+          hours: {
+            start: '08:00',
+            end: '22:00'
+          }
+        },
+        pricing: {
+          minimumOrder: 12.00,
+          deliveryFee: 2.99
+        },
+        serviceArea: {
+          radius: 15
+        },
+        kitchenPhotos: ['https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300', 'https://images.unsplash.com/photo-1556909835-9dff1c0dc3e5?w=300'],
+        location: {
+          address: '456 Business Avenue',
+          city: 'Singapore',
+          postalCode: '123789',
+          coordinates: {
+            latitude: 1.3521,
+            longitude: 103.8198
+          }
+        }
+      });
+      await chef.save();
+      console.log(`👨‍🍳 Created chef profile for: ${email}`);
+
+      // Create vendor profile
+      const vendor = new Vendor({
+        userId: user._id,
+        businessName: `${name}'s Business`,
+        businessType: 'restaurant',
+        contactEmail: email,
+        contactPhone: '+1234567899',
+        isVerified: true,
+        isActive: true,
+        rating: 4.9,
+        totalSales: 15000
+      });
+      await vendor.save();
+      console.log(`🏪 Created vendor profile for: ${email}`);
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: `Test user created successfully`,
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error('Error creating test user:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: (error as Error).message
+    });
+  }
+});
+
+// Temporary endpoint to update user roles for testing
+router.post('/update-user-role', async (req, res) => {
+  try {
+    const { email, newRole } = req.body;
+
+    if (!email || !newRole) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and newRole are required'
+      });
+    }
+
+    // Find and update the user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    const oldRole = user.role;
+    user.role = newRole as any;
+    await user.save();
+
+    console.log(`✅ Updated ${email} role from ${oldRole} to ${newRole}`);
+
+    return res.status(200).json({
+      success: true,
+      message: `Updated ${email} role from ${oldRole} to ${newRole}`,
+      data: {
+        email: user.email,
+        name: user.name,
+        oldRole,
+        newRole
+      }
+    });
+
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: (error as Error).message
+    });
+  }
+});
 
 // @route   GET /api/admin/stats
 // @desc    Get platform statistics
