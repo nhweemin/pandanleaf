@@ -471,4 +471,185 @@ router.put('/users/:id/status', async (req, res) => {
   }
 });
 
+// @route   GET /api/admin/businesses/approved
+// @desc    Get all approved businesses
+// @access  Private (Admin only)
+router.get('/businesses/approved', async (req, res) => {
+  try {
+    const { limit = 50, page = 1 } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const businesses = await Chef.find({ isApproved: true })
+      .populate('userId', 'name email phone')
+      .sort({ 'verification.reviewedAt': -1 })
+      .limit(Number(limit))
+      .skip(skip);
+
+    const total = await Chef.countDocuments({ isApproved: true });
+
+    return res.json({
+      success: true,
+      data: {
+        businesses,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total,
+          pages: Math.ceil(total / Number(limit))
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Get approved businesses error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error fetching approved businesses'
+    });
+  }
+});
+
+// @route   PUT /api/admin/businesses/:id/status
+// @desc    Update business status (activate/deactivate)
+// @access  Private (Admin only)
+router.put('/businesses/:id/status', async (req, res) => {
+  try {
+    const { isActive } = req.body;
+    
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({
+        success: false,
+        message: 'isActive must be a boolean value'
+      });
+    }
+
+    const business = await Chef.findByIdAndUpdate(
+      req.params.id,
+      { isActive },
+      { new: true }
+    ).populate('userId', 'name email');
+
+    if (!business) {
+      return res.status(404).json({
+        success: false,
+        message: 'Business not found'
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: `Business ${isActive ? 'activated' : 'deactivated'} successfully`,
+      data: { business }
+    });
+  } catch (error) {
+    console.error('Update business status error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error updating business status'
+    });
+  }
+});
+
+// @route   DELETE /api/admin/businesses/:id
+// @desc    Delete business and associated user account
+// @access  Private (Admin only)
+router.delete('/businesses/:id', async (req, res) => {
+  try {
+    const business = await Chef.findById(req.params.id).populate('userId');
+    
+    if (!business) {
+      return res.status(404).json({
+        success: false,
+        message: 'Business not found'
+      });
+    }
+
+    // Delete associated products
+    await Product.deleteMany({ chefId: business._id });
+    
+    // Delete business profile
+    await Chef.findByIdAndDelete(req.params.id);
+    
+    // Delete user account
+    await User.findByIdAndDelete(business.userId._id);
+
+    return res.json({
+      success: true,
+      message: 'Business and associated data deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete business error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error deleting business'
+    });
+  }
+});
+
+// @route   PUT /api/admin/orders/:id/status
+// @desc    Update order status
+// @access  Private (Admin only)
+router.put('/orders/:id/status', async (req, res) => {
+  try {
+    const { status, adminNotes } = req.body;
+    
+    const validStatuses = ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Status must be one of: ${validStatuses.join(', ')}`
+      });
+    }
+
+    const updateData: any = { status };
+    
+    // Update timeline based on status
+    switch (status) {
+      case 'confirmed':
+        updateData['timeline.confirmedAt'] = new Date();
+        break;
+      case 'preparing':
+        updateData['timeline.preparingAt'] = new Date();
+        break;
+      case 'ready':
+        updateData['timeline.readyAt'] = new Date();
+        break;
+      case 'completed':
+        updateData['timeline.completedAt'] = new Date();
+        break;
+      case 'cancelled':
+        updateData['timeline.cancelledAt'] = new Date();
+        if (adminNotes) {
+          updateData['cancellation.reason'] = adminNotes;
+        }
+        break;
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    ).populate('customerId', 'name email')
+     .populate('chefId', 'businessName');
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: `Order status updated to ${status}`,
+      data: { order }
+    });
+  } catch (error) {
+    console.error('Update order status error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error updating order status'
+    });
+  }
+});
+
 export default router; 
