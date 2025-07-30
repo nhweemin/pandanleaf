@@ -178,13 +178,13 @@ router.get('/stats', async (req, res) => {
     // Get user statistics
     const totalUsers = await User.countDocuments();
     const totalCustomers = await User.countDocuments({ role: 'customer' });
-    const totalChefs = await User.countDocuments({ role: 'chef' });
+    const totalBusinessOwners = await User.countDocuments({ role: 'business_owner' });
     const totalAdmins = await User.countDocuments({ role: 'admin' });
 
-    // Get chef statistics
-    const approvedChefs = await Chef.countDocuments({ isApproved: true });
-    const pendingChefs = await Chef.countDocuments({ 'verification.status': 'pending' });
-    const activeChefs = await Chef.countDocuments({ isActive: true });
+    // Get business statistics
+    const approvedBusinesses = await Chef.countDocuments({ isApproved: true });
+    const pendingBusinesses = await Chef.countDocuments({ 'verification.status': 'pending' });
+    const activeBusinesses = await Chef.countDocuments({ isActive: true });
 
     // Get product statistics
     const totalProducts = await Product.countDocuments();
@@ -215,8 +215,8 @@ router.get('/stats', async (req, res) => {
       'timeline.placedAt': { $gte: thirtyDaysAgo }
     });
 
-    // Get top-rated chefs
-    const topChefs = await Chef.find({ isApproved: true })
+    // Get top-rated businesses
+    const topBusinesses = await Chef.find({ isApproved: true })
       .populate('userId', 'name email')
       .sort({ 'rating.average': -1 })
       .limit(5);
@@ -233,14 +233,14 @@ router.get('/stats', async (req, res) => {
         users: {
           total: totalUsers,
           customers: totalCustomers,
-          chefs: totalChefs,
+          businessOwners: totalBusinessOwners,
           admins: totalAdmins
         },
-        chefs: {
-          total: totalChefs,
-          approved: approvedChefs,
-          pending: pendingChefs,
-          active: activeChefs
+        businesses: {
+          total: totalBusinessOwners,
+          approved: approvedBusinesses,
+          pending: pendingBusinesses,
+          active: activeBusinesses
         },
         products: {
           total: totalProducts,
@@ -258,7 +258,7 @@ router.get('/stats', async (req, res) => {
           total: totalRevenue,
           averageOrderValue: completedOrders > 0 ? totalRevenue / completedOrders : 0
         },
-        topChefs,
+        topBusinesses,
         popularProducts
       }
     });
@@ -274,15 +274,15 @@ router.get('/stats', async (req, res) => {
 // @route   GET /api/admin/chefs/pending
 // @desc    Get pending chef applications
 // @access  Private (Admin only)
-router.get('/chefs/pending', async (req, res) => {
+router.get('/businesses/pending', async (req, res) => {
   try {
-    const pendingChefs = await Chef.find({ 'verification.status': 'pending' })
+    const pendingBusinesses = await Chef.find({ 'verification.status': 'pending' })
       .populate('userId', 'name email phone')
       .sort({ 'verification.submittedAt': -1 });
 
     return res.json({
       success: true,
-      data: { chefs: pendingChefs }
+      data: { businesses: pendingBusinesses }
     });
   } catch (error) {
     console.error('Get pending chefs error:', error);
@@ -296,7 +296,7 @@ router.get('/chefs/pending', async (req, res) => {
 // @route   PUT /api/admin/chefs/:id/approve
 // @desc    Approve or reject chef application
 // @access  Private (Admin only)
-router.put('/chefs/:id/approve', async (req, res) => {
+router.put('/businesses/:id/approve', async (req, res) => {
   try {
     const { status, reviewNotes, reviewedBy } = req.body;
     
@@ -322,17 +322,17 @@ router.put('/chefs/:id/approve', async (req, res) => {
     if (!chef) {
       return res.status(404).json({
         success: false,
-        message: 'Chef not found'
+        message: 'Business not found'
       });
     }
 
     return res.json({
       success: true,
-      message: `Chef application ${status} successfully`,
-      data: { chef }
+      message: `Business application ${status} successfully`,
+      data: { business: chef }
     });
   } catch (error) {
-    console.error('Approve chef error:', error);
+    console.error('Approve business error:', error);
     const err = error as any;
     console.error('Error details:', {
       name: err.name,
@@ -341,7 +341,7 @@ router.put('/chefs/:id/approve', async (req, res) => {
     });
     return res.status(500).json({
       success: false,
-      message: `Error processing chef application: ${err.message || 'Unknown error'}`
+      message: `Error processing business application: ${err.message || 'Unknown error'}`
     });
   }
 });
